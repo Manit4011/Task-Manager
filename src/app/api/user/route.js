@@ -1,7 +1,7 @@
 import { ConnectDB } from "@/lib/db";
 import { User } from "@/lib/models/userModel";
 import { NextResponse } from "next/server";
-
+import bcrypt from "bcryptjs";
 const db = async () => {
     await ConnectDB();
 };
@@ -28,6 +28,7 @@ export async function POST(request) {
             email: email,
             password: password
         })
+        newUser.password = await bcrypt.hash(newUser.password,parseInt(process.env.SALT))
         await newUser.save()
         return NextResponse.json({
             message: "new user added",
